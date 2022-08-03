@@ -2,9 +2,9 @@
 This project explains hardware and software for a backyard H1 line detection.
 
 # Code Usage
-pyhton3 data_avg.py [-h HELP] [-ip INPUTFILE] [-io OUTPUTFILE] [-t AVGTIME]
-                   [-plt PLOTFILENAME] [-res TIMERES] [-cali CALIBRATIONFILE]
-                   [-l LOWERCUTOFF] [-u UPPERCUTOFF]
+    pyhton3 data_avg.py [-h HELP] [-ip INPUTFILE] [-io OUTPUTFILE] [-t AVGTIME]
+                       [-plt PLOTFILENAME] [-res TIMERES] [-cali CALIBRATIONFILE]
+                       [-l LOWERCUTOFF] [-u UPPERCUTOFF]
                    
 argument description:
   -h, --help            show this help message and exit
