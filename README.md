@@ -9,8 +9,10 @@ This project explains hardware and software for a backyard H1 line detection.
 
 
 argument description:
-      -h, --help            show this help message and exit
-      -ip INPUTFILE, --inputfile INPUTFILE
+
+        -h, --help            
+                            show this help message and exit
+        ip INPUTFILE, --inputfile INPUTFILE
                             input filename with path (must be provided)
 
 
@@ -44,7 +46,8 @@ argument description:
 
 
 Example:
-    python3 data_avg.py -ip [Input file path] -t [average time in seconds] -cali [calibration file path] -l [lower limit of waterfall plot] -u [upper limit of waterfall plot]
+
+        python3 data_avg.py -ip [Input file path] -t [average time in seconds] -cali [calibration file path] -l [lower limit of waterfall plot] -u [upper limit of waterfall plot]
 
 
 # Sample Data
