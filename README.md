@@ -1,6 +1,7 @@
 # Project_H1_line_detection
 This project explains hardware and software for a backyard H1 line detection.
 
+
 # Code Usage
     pyhton3 data_avg.py [-h HELP] [-ip INPUTFILE] [-io OUTPUTFILE] [-t AVGTIME]
                        [-plt PLOTFILENAME] [-res TIMERES] [-cali CALIBRATIONFILE]
