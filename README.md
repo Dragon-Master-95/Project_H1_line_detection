@@ -10,39 +10,16 @@ This project explains hardware and software for a backyard H1 line detection.
 
 argument description:
 
-      -h, --help            
-                            show this help message and exit
-      -ip INPUTFILE, --inputfile INPUTFILE
-                            input filename with path (must be provided)
-
-
-      -io OUTPUTFILE, --outputfile OUTPUTFILE
-                            output filename with path
-
-
-      -t AVGTIME, --avgtime AVGTIME
-                            average time in seconds (default = 10s)
-
-
-      -plt PLOTFILENAME, --plotfilename PLOTFILENAME
-                            plot the and save the filename with path
-
-
-      -res TIMERES, --timeres TIMERES
-                            time resolution of data in seconds (default = 1s)
-
-
-      -cali CALIBRATIONFILE, --calibrationfile CALIBRATIONFILE
-                            To remove system error provide clibration file path
-                            (default setting is to plot non calibrated result)
-
-
-      -l LOWERCUTOFF, --lowercutoff LOWERCUTOFF
-                            lower cutoff for waterfall plot
-
-
-      -u UPPERCUTOFF, --uppercutoff UPPERCUTOFF
-                            lower cutoff for waterfall plot
+      -h, --help                                                        show this help message and exit
+      -ip INPUTFILE, --inputfile INPUTFILE                              input filename with path (must be provided)
+      -io OUTPUTFILE, --outputfile OUTPUTFILE                           output filename with path
+      -t AVGTIME, --avgtime AVGTIME                                     average time in seconds (default = 10s)
+      -plt PLOTFILENAME, --plotfilename PLOTFILENAME                    plot the and save the filename with path
+      -res TIMERES, --timeres TIMERES                                   time resolution of data in seconds (default = 1s)
+      -cali CALIBRATIONFILE, --calibrationfile CALIBRATIONFILE          To remove system error provide clibration file path
+                                                                        (default setting is to plot non calibrated result)
+      -l LOWERCUTOFF, --lowercutoff LOWERCUTOFF                         lower cutoff for waterfall plot
+      -u UPPERCUTOFF, --uppercutoff UPPERCUTOFF                         lower cutoff for waterfall plot
 
 
 Example:
@@ -51,4 +28,4 @@ Example:
 
 
 # Sample Data
-Sample data file link: https://www.dropbox.com/sh/fiapt4wd439nawa/AAAxG33dJw-1ByZ5uw9c7XEaa?dl=0
+Sample data file link: [Dropbox](https://www.dropbox.com/sh/fiapt4wd439nawa/AAAxG33dJw-1ByZ5uw9c7XEaa?dl=0)
