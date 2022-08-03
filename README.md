@@ -10,9 +10,9 @@ This project explains hardware and software for a backyard H1 line detection.
 
 argument description:
 
-        -h, --help            
+      -h, --help            
                             show this help message and exit
-        ip INPUTFILE, --inputfile INPUTFILE
+      -ip INPUTFILE, --inputfile INPUTFILE
                             input filename with path (must be provided)
 
 
