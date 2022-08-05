@@ -43,11 +43,21 @@ argument description:
 
       -u UPPERCUTOFF, --uppercutoff UPPERCUTOFF
                             lower cutoff for waterfall plot
+         
+      -f1 STARTFREQUENCY, --startfrequency STARTFREQUENCY
+                            Mention start frequency in MHz (Default: Full range)
+  
+      -f2 STOPFREQUENCY, --stopfrequency STOPFREQUENCY
+                            Mention stop frequency in MHz (Default: Full range)
+      
+      -dt DELTATIME, --deltatime DELTATIME
+                            This is for multiple time averaged plot delta time t in hours (decimal values are accepted), an interractive save rutine (in development)
+      
 
 
 Example:
 
-        python3 data_avg.py -ip [Input file path] -t [average time in seconds] -cali [calibration file path] -l [lower limit of waterfall plot] -u [upper limit of waterfall plot]
+        python3 data_avg.py -ip [Input file path] -t [average time in seconds] -cali [calibration file path] -l [lower limit of waterfall plot] -u [upper limit of waterfall plot] -f1 [start frequency] -f2 [stop frequency] -dt [Time in hours]
 
 
 # Sample Data
