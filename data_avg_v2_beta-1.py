@@ -30,9 +30,25 @@ parser.add_argument("-res","--timeres", help="time resolution of data in seconds
 parser.add_argument("-cali","--calibrationfile", help="To remove system error provide clibration file path (default setting is to plot non calibrated result)")
 parser.add_argument("-l","--lowercutoff", help="lower cutoff for waterfall plot")
 parser.add_argument("-u","--uppercutoff", help="lower cutoff for waterfall plot")
+parser.add_argument("-f1","--startfrequency", help="Mention start frequency in MHz (Default: Full range)")
+parser.add_argument("-f2","--stopfrequency", help="Mention stop frequency in MHz (Default: Full range)")
+parser.add_argument("-dt","--deltatime", help="This is for multiple time averaged plot delta time t in hours (decimal values are accepted), an interractive save rutine")
+
 
 args = parser.parse_args()
 
+try:
+    f1 = float(args.startfrequency)
+except:
+    f1=None
+try:
+    f2 = float(args.stopfrequency)
+except:
+    f2=None
+try:
+    dt = float(args.deltatime)
+except:
+    dt=None
 if args.avgtime==None :
     t = 10
 else:
@@ -90,9 +106,10 @@ def cal_avgdata(data,cal_data,t,timeres,timestamps):
     
     
 def avgdata(data,t,timeres,timestamps):
-    if t<timeres:
-        print("The (averaging time) < (time resolution) of the data")
-        print("Thus, polting and saving the same resolution data")
+    if (timeres!=None):
+        if (t<=timeres):
+            print("The (averaging time) <= (time resolution) of the data")
+            print("Thus, polting and saving the same resolution data")
         return data
     '''
     if (np.floor_divide(t,timeres)<t/timeres):
@@ -114,13 +131,87 @@ def avgdata(data,t,timeres,timestamps):
         new_data[int(a),int(3):] = np.mean(data[int(a*t):int(a*t+t),int(3):],axis=0)
     new_timestamps=np.asarray(new_timestamps)
     return new_data, new_timestamps
-        
+
+def inter_plot(data,timestamps,dt,f1,f2,fname):
+    x = np.linspace(data[1,1],data[1,2],np.shape(data)[1]-3)/1e+6 #freqencies
+    y = pd.DataFrame(timestamps,columns=['Timestamp'])
+    z = data[:,3:] 
+    
+    hrs =  y['Timestamp'].dt.hour.to_numpy()
+    m = y['Timestamp'].dt.minute.to_numpy()
+    s = y['Timestamp'].dt.second.to_numpy()
+    hrs = hrs+m/60+s/3600
+    for i in range(0,len(hrs)-1):
+        if hrs[i+1]<hrs[i]:
+            hrs[i+1] = hrs[i+1]+24
+            
+    count = 1
+    flag = int(0)
+    data_flat = np.zeros(np.shape(z)[1])
+    flat_data_list=[]
+    for i in range(0,len(hrs)):
+        if((hrs[i]<=hrs[flag]+dt)):
+            data_flat = data_flat + z[i,:]
+            count=count+1
+        else:
+            flag = i
+            data_flat = data_flat/count
+            count = 1
+            flat_data_list.append(data_flat)
+            data_flat = np.zeros(np.shape(z)[1])
+    
+    count=0
+    print("Starting ploting routine........")
+    print(len(flat_data_list))
+    for d in flat_data_list:
+        count=count+1
+#        try:
+        h1 = plt.figure()
+        plt.plot(x[np.where(((x>=f1)&(x<=f2)))],d[np.where(((x>=f1)&(x<=f2)))])
+        plt.grid()
+        plt.xlabel('Frequency in MHz')
+        plt.ylabel('Relative Magnitude in dB')
+        plt.ylim(-0.15,0.1)
+#            plt.show()
+#            flag = input('Want to save figure?(Y|y/N|n): ')
+#            if(flag == 'Y' or flag == 'y'):
+        name = fname[:-3]+'_time_avg_dt_'+str(dt)+'hrs_'+str(count)+'.png'
+        h1.savefig(name) 
+#            else:
+#                print('Moving on to next plot.....') 
+#        except:
+#            try:
+#                h1 = plt.figure()
+#                plt.plot(x[np.where(x>=f1)],d[np.where(x>=f1)])
+#                plt.grid()
+#                plt.xlabel('Frequency in MHz')
+#                plt.ylabel('Relative Magnitude in dB')
+#                plt.show()
+#                flag = input('Want to save figure?(Y|y/N|n): ')
+#                if(flag == 'Y' or flag == 'y'):
+#                    name = fname[:-3]+'_time_avg_dt_'+str(dt)+'hrs_'+str(count)+'.png'
+#                    h1.savefig(name) 
+#                else:
+#                    print('Moving on to next plot.....')
+#            except:
+#                h1 = plt.figure()
+#                plt.plot(x[np.where(x<=f2)],d[np.where(x<=f2)])
+#                plt.grid()
+#                plt.xlabel('Frequency in MHz')
+#                plt.ylabel('Relative Magnitude in dB')
+#                plt.show()
+#                flag = input('Want to save figure?(Y|y/N|n): ')
+#                if(flag == 'Y' or flag == 'y'):
+#                    name = fname[:-3]+'_time_avg_dt_'+str(dt)+'hrs_'+str(count)+'.png'
+#                    h1.savefig(name) 
+#                else:
+#                    print('Moving on to next plot.....')
 
 def plotting_data(data,fname,timestamps):
     
     x = np.linspace(data[1,1],data[1,2],np.shape(data)[1]-3)/1e+6
     y = np.arange(0,np.shape(data)[0])
-    ylabel = timestamps
+    ylabel = pd.DataFrame(timestamps,columns=['Timestamp'])
     z = data[:,3:]
 #    z[np.where(z<=np.min(z)+37)] = -6
 #    z = z+20
@@ -145,7 +236,8 @@ def plotting_data(data,fname,timestamps):
     plt.xlabel('Frequency (in MHz)')
     plt.ylabel('Time (in IST)')
     k = np.arange(0,y[-1],y[-1]/11)
-    plt.yticks(y[k.astype(int)],ylabel[k.astype(int)])
+    plt.yticks(y[k.astype(int)],ylabel['Timestamp'][k.astype(int)])
+    plt.xticks(rotation = 45)
     h1.colorbar(ax)
     h1.tight_layout()
     plt.grid()
@@ -176,6 +268,7 @@ def data_flatenning(df):
     last_col = copy.deepcopy(df.columns[-1])
         
     df['DateTime'] = pd.to_datetime(df[0]+df[1])
+    df['DateTime'].dt.strftime('%Y-%m-%d %H:%M:%S')
     unique_timestamps = df['DateTime'].unique()
         
     if (len(unique_timestamps)==len(df)):
@@ -241,10 +334,14 @@ except:
 print("Averaging Done and Plotting Started!!!!!")
 plotting_data(data_averaged,pfile,timestamps)
 
+if dt!=None:
+    print("Starting interactive plot saving as delta time is specified.......")
+    inter_plot(data_averaged,timestamps,dt,f1,f2,pfile)
+
 
 print("Done!!!!")
 
-        
+#df = pd.read_table("/media/astro/7E9A5061014A7BBD/harsha/H1_setup/H1_data/log_H1_30_07_2022_19_19_06", delimiter=',',header=None)       
     
     
     
