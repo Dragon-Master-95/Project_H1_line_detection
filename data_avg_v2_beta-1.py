@@ -36,9 +36,19 @@ parser.add_argument("-dt","--deltatime", help="This is for multiple time average
 
 
 args = parser.parse_args()
-f1 = float(args.startfrequency)
-f2 = float(args.stopfrequency)
-dt = float(args.deltatime)
+
+try:
+    f1 = float(args.startfrequency)
+except:
+    f1=None
+try:
+    f2 = float(args.stopfrequency)
+except:
+    f2=None
+try:
+    dt = float(args.deltatime)
+except:
+    dt=None
 if args.avgtime==None :
     t = 10
 else:
