@@ -252,6 +252,15 @@ def plotting_data(data,fname,timestamps):
     name = fname[:-3]+'freq_avg.png'
     h3.savefig(name)
     
+    h4, ax = plt.subplots(2, 2, 
+                       gridspec_kw={
+                           'width_ratios': [3, 1],
+                           'height_ratios': [1, 3]})
+    ax[0][0].plot(x,np.mean(z,axis=0))
+    ax[1][0].plot(ylabel,np.mean(z,axis=1))
+    ax[1][1].plot(np.mean(z,axis=1),ylabel)
+    name = fname[:-3]+'combined.png'
+    h4.savefig(name)
     plt.show()
     
 def data_flatenning(df):
