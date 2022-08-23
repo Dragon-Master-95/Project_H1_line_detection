@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Wed Jul 27 11:05:22 2022
-
-@author: Dragon_Master
-"""
 
 import argparse
 import numpy as np
@@ -12,7 +7,7 @@ import pandas as pd
 import copy
 import matplotlib.pyplot as plt
 import datetime
-
+from matplotlib.gridspec import GridSpec
 global low, up
 parser = argparse.ArgumentParser()
 
@@ -36,9 +31,19 @@ parser.add_argument("-dt","--deltatime", help="This is for multiple time average
 
 
 args = parser.parse_args()
-f1 = float(args.startfrequency)
-f2 = float(args.stopfrequency)
-dt = float(args.deltatime)
+
+try:
+    f1 = float(args.startfrequency)
+except:
+    f1=None
+try:
+    f2 = float(args.stopfrequency)
+except:
+    f2=None
+try:
+    dt = float(args.deltatime)
+except:
+    dt=None
 if args.avgtime==None :
     t = 10
 else:
@@ -96,6 +101,7 @@ def cal_avgdata(data,cal_data,t,timeres,timestamps):
     
     
 def avgdata(data,t,timeres,timestamps):
+    
     if (timeres!=None):
         if (t<=timeres):
             print("The (averaging time) <= (time resolution) of the data")
@@ -161,108 +167,60 @@ def inter_plot(data,timestamps,dt,f1,f2,fname):
         plt.grid()
         plt.xlabel('Frequency in MHz')
         plt.ylabel('Relative Magnitude in dB')
-        plt.ylim(-0.15,0.1)
-#            plt.show()
-#            flag = input('Want to save figure?(Y|y/N|n): ')
-#            if(flag == 'Y' or flag == 'y'):
+        plt.ylim(-0.15,0.4)
         name = fname[:-3]+'_time_avg_dt_'+str(dt)+'hrs_'+str(count)+'.png'
         h1.savefig(name) 
-#            else:
-#                print('Moving on to next plot.....') 
-#        except:
-#            try:
-#                h1 = plt.figure()
-#                plt.plot(x[np.where(x>=f1)],d[np.where(x>=f1)])
-#                plt.grid()
-#                plt.xlabel('Frequency in MHz')
-#                plt.ylabel('Relative Magnitude in dB')
-#                plt.show()
-#                flag = input('Want to save figure?(Y|y/N|n): ')
-#                if(flag == 'Y' or flag == 'y'):
-#                    name = fname[:-3]+'_time_avg_dt_'+str(dt)+'hrs_'+str(count)+'.png'
-#                    h1.savefig(name) 
-#                else:
-#                    print('Moving on to next plot.....')
-#            except:
-#                h1 = plt.figure()
-#                plt.plot(x[np.where(x<=f2)],d[np.where(x<=f2)])
-#                plt.grid()
-#                plt.xlabel('Frequency in MHz')
-#                plt.ylabel('Relative Magnitude in dB')
-#                plt.show()
-#                flag = input('Want to save figure?(Y|y/N|n): ')
-#                if(flag == 'Y' or flag == 'y'):
-#                    name = fname[:-3]+'_time_avg_dt_'+str(dt)+'hrs_'+str(count)+'.png'
-#                    h1.savefig(name) 
-#                else:
-#                    print('Moving on to next plot.....')
 
 def plotting_data(data,fname,timestamps):
-    
-    x = np.linspace(data[1,1],data[1,2],np.shape(data)[1]-3)/1e+6
-    y = np.arange(0,np.shape(data)[0])
-    ylabel = pd.DataFrame(timestamps,columns=['Timestamp'])
-    z = data[:,3:]
-#    z[np.where(z<=np.min(z)+37)] = -6
-#    z = z+20
-    print(len(np.where(z<=np.min(z)+25)[0]),len(np.where(z<=np.min(z)+25)[1]))
-#    z = z/np.max(z)
-    
-#    data_thresh=np.where(z>-5.0)
-#    z_old=z
-#    z[data_thresh]=np.nan    
+	x = np.linspace(data[1,1],data[1,2],np.shape(data)[1]-3)/1e+6
+	y = np.arange(0,np.shape(data)[0])
+	ylabel = pd.DataFrame(timestamps,columns=['Timestamp'])
+	
+	ylabel1 = pd.DataFrame()
+	ylabel1['Timestamp'] = ylabel['Timestamp'].astype(str)
+	ylabel1['Timestamp'] = ylabel1['Timestamp'].str[-9:]
+	
+	z = data[:,3:]
+	print(len(np.where(z<=np.min(z)+25)[0]),len(np.where(z<=np.min(z)+25)[1]))
 
 
-    
-    h1 = plt.figure()
-    if(low!=-100 and up!=-100):
-        ax = plt.pcolor(x,y,z,cmap='jet', vmin=low, vmax=up)#vmin=np.min(z), vmax=np.max(z))
-    elif(low!=-100):
-        ax = plt.pcolor(x,y,z,cmap='jet', vmin=low, vmax=np.max(z))
-    elif(up!=-100):
-        ax = plt.pcolor(x,y,z,cmap='jet', vmin=np.min(z), vmax=up)
-    else:
-        ax = plt.pcolor(x,y,z,cmap='jet', vmin=np.min(z), vmax=np.max(z))
-    plt.xlabel('Frequency (in MHz)')
-    plt.ylabel('Time (in IST)')
-    k = np.arange(0,y[-1],y[-1]/11)
-    plt.yticks(y[k.astype(int)],ylabel['Timestamp'][k.astype(int)])
-    plt.xticks(rotation = 45)
-    h1.colorbar(ax)
-    h1.tight_layout()
-    plt.grid()
-    h1.savefig(fname)
-    
-    h2 = plt.figure()
-    plt.plot(x,np.mean(z,axis=0))
-    plt.xlabel('Frequency (in MHz)')
-    plt.ylabel('Magnitude')
-    h2.tight_layout()
-    plt.grid()
-    name = fname[:-3]+'time_avg.png'
-    h2.savefig(name)
-    
-    h3 = plt.figure()
-    plt.plot(ylabel,np.mean(z,axis=1))
-    plt.xlabel('Time')
-    plt.ylabel('Magnitude')
-    plt.xticks(rotation=90)
-    h3.tight_layout()
-    plt.grid()
-    name = fname[:-3]+'freq_avg.png'
-    h3.savefig(name)
-    
-    h4, ax = plt.subplots(2, 2, 
-                       gridspec_kw={
-                           'width_ratios': [3, 1],
-                           'height_ratios': [1, 3]})
-    ax[0][0].plot(x,np.mean(z,axis=0))
-    ax[1][0].plot(ylabel,np.mean(z,axis=1))
-    ax[1][1].plot(np.mean(z,axis=1),ylabel)
-    name = fname[:-3]+'combined.png'
-    h4.savefig(name)
-    plt.show()
-    
+	fig = plt.figure()
+	
+	ax1 = plt.subplot2grid((15,15), (0,0), colspan=10, rowspan = 4)
+	ax1.plot(x,np.mean(z,axis=0))
+	#plt.xlabel('Magnitude')
+	ax1.set_xticks([])
+	ax1.grid()
+	
+	ax2 = plt.subplot2grid((15,15), (4,0), colspan=10, rowspan=10)
+	if(low!=-100 and up!=-100):
+		ax = plt.pcolor(x,y,z,cmap='jet', vmin=low, vmax=up)
+	elif(low!=-100):
+		ax = plt.pcolor(x,y,z,cmap='jet', vmin=low, vmax=np.max(z))
+	elif(up!=-100):
+		ax = plt.pcolor(x,y,z,cmap='jet', vmin=np.min(z), vmax=up)
+	else:
+		ax = plt.pcolor(x,y,z,cmap='jet', vmin=np.min(z), vmax=np.max(z))
+	ax2.set_xlabel('Frequency (in MHz)')
+	ax2.set_ylabel('Time (in IST)')
+	k = np.arange(0,y[-1],y[-1]/11)
+	#ax2.set_yticks(y[k.astype(int)],ylabel['Timestamp'][k.astype(int)])
+	ax2.set_yticks(y[k.astype(int)],ylabel1['Timestamp'][k.astype(int)])
+	#ax2.set_xticks(rotation = 45)
+	plt.colorbar(ax,orientation="horizontal")
+	ax2.grid()
+
+
+	ax3 = plt.subplot2grid((15,15), (4,11),colspan = 2, rowspan=7)
+	ax3.plot(np.mean(z,axis=1),ylabel)
+	#plt.ylabel('Magnitude')
+	ax3.set_yticks([])
+	ax3.grid()
+	#tile = df[0].iloc[0] df[0].iloc[-1]
+	plt.suptitle(f"{df[0].iloc[0]} - {df[0].iloc[-1]}")
+	fig.savefig(fname)
+	plt.show()  
+	   
 def data_flatenning(df):
     last_col = copy.deepcopy(df.columns[-1])
         
@@ -327,6 +285,7 @@ try:
 except:
     print("No calibration file found....\nStarting only Averaging.....")
     data, unique_timestamps = data_flatenning(df)
+    timeres=None
     data_averaged, timestamps = avgdata(data,t,timeres,unique_timestamps)
 
 
@@ -341,6 +300,3 @@ if dt!=None:
 print("Done!!!!")
 
 #df = pd.read_table("/media/astro/7E9A5061014A7BBD/harsha/H1_setup/H1_data/log_H1_30_07_2022_19_19_06", delimiter=',',header=None)       
-    
-    
-    
